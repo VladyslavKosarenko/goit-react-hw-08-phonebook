@@ -1,17 +1,24 @@
-import { Phonebook } from './Phonebook';
-export const App = () => {
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navigation from './Navigation';
+import RegistrationForm from './RegistrationForm';
+import LoginForm from './LoginForm';
+import ContactList from './ContactList';
+import Phonebook from './Phonebook';
+
+const App = () => {
   return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        color: '#010101',
-      }}
-    >
-      <Phonebook></Phonebook>
-    </div>
+    <Router>
+      <div>
+        <Navigation />
+        <Routes>
+          <Route path="/register" element={<RegistrationForm />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/contacts" element={<ContactList />} />
+          <Route path="/" element={<Phonebook />} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
+
+export default App;

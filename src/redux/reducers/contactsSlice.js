@@ -1,16 +1,19 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-const apiEndpoint =
-  'https://6580be5e3dfdd1b11c420830.mockapi.io/contacts/contacts';
+const apiEndpoint = 'https://connections-api.herokuapp.com';
 
 export const fetchContacts = createAsyncThunk(
   'contacts/fetchContacts',
   async () => {
     try {
-      const response = await fetch(apiEndpoint);
+      const response = await fetch(`${apiEndpoint}/contacts`, {
+        method: 'GET',
+      });
+
       if (!response.ok) {
         throw new Error('Failed to fetch contacts');
       }
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -21,18 +24,20 @@ export const fetchContacts = createAsyncThunk(
 
 export const addContact = createAsyncThunk(
   'contacts/addContact',
-  async contact => {
+  async contactData => {
     try {
-      const response = await fetch(apiEndpoint, {
+      const response = await fetch(`${apiEndpoint}/contacts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(contact),
+        body: JSON.stringify(contactData),
       });
+
       if (!response.ok) {
         throw new Error('Failed to add contact');
       }
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -43,15 +48,18 @@ export const addContact = createAsyncThunk(
 
 export const deleteContact = createAsyncThunk(
   'contacts/deleteContact',
-  async id => {
+  async contactId => {
     try {
-      const response = await fetch(`${apiEndpoint}/${id}`, {
+      const response = await fetch(`${apiEndpoint}/contacts/${contactId}`, {
         method: 'DELETE',
       });
+
       if (!response.ok) {
         throw new Error('Failed to delete contact');
       }
-      return id;
+
+      const data = await response.json();
+      return data;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -70,7 +78,6 @@ const contactsSlice = createSlice({
     builder
       .addCase(fetchContacts.pending, state => {
         state.isLoading = true;
-        state.error = null;
       })
       .addCase(fetchContacts.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -80,13 +87,29 @@ const contactsSlice = createSlice({
         state.isLoading = false;
         state.error = action.error.message;
       })
+      .addCase(addContact.pending, state => {
+        state.isLoading = true;
+      })
       .addCase(addContact.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.items.push(action.payload);
       })
+      .addCase(addContact.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
+      })
+      .addCase(deleteContact.pending, state => {
+        state.isLoading = true;
+      })
       .addCase(deleteContact.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.items = state.items.filter(
-          contact => contact.id !== action.payload
+          contact => contact.id !== action.payload.id
         );
+      })
+      .addCase(deleteContact.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
       });
   },
 });

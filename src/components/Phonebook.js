@@ -9,17 +9,21 @@ import {
   addContact,
   deleteContact,
 } from '../redux/reducers/contactsSlice';
+import { logoutUser, getCurrentUser } from '../redux/reducers/userSlice';
 
-export const Phonebook = () => {
+const Phonebook = () => {
   const dispatch = useDispatch();
   const contacts = useSelector(state => state.contacts.items || []);
-  const isLoading = useSelector(state => state.contacts.isLoading);
+  const isLoadingContacts = useSelector(state => state.contacts.isLoading);
+  const user = useSelector(state => state.user.user);
+  const isLoadingUser = useSelector(state => state.user.isLoading);
 
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
   useEffect(() => {
     dispatch(fetchContacts());
+    dispatch(getCurrentUser());
   }, [dispatch]);
 
   const handleChangeName = event => {
@@ -64,9 +68,26 @@ export const Phonebook = () => {
     dispatch(deleteContact(contactId));
   };
 
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutUser());
+    } catch (error) {
+      console.error('Failed to logout:', error.message);
+    }
+  };
+
   return (
     <div>
       <h1>Phonebook</h1>
+      {user ? (
+        <div>
+          <p>Welcome, {user.username}!</p>
+          <button onClick={handleLogout}>Logout</button>
+        </div>
+      ) : (
+        <p>Please log in</p>
+      )}
+
       <ContactForm
         name={name}
         number={number}
@@ -78,7 +99,7 @@ export const Phonebook = () => {
       <h2>Contacts</h2>
       <Filter />
 
-      {isLoading ? (
+      {isLoadingContacts || isLoadingUser ? (
         <p>Loading...</p>
       ) : (
         <ContactList
@@ -89,3 +110,5 @@ export const Phonebook = () => {
     </div>
   );
 };
+
+export default Phonebook;

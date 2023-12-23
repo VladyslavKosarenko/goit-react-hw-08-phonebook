@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import { useSelector } from 'react-redux';
 
 const ContactList = ({ onDeleteContact }) => {
@@ -20,10 +20,6 @@ const ContactList = ({ onDeleteContact }) => {
       ))}
     </ul>
   );
-};
-
-ContactList.propTypes = {
-  onDeleteContact: PropTypes.func.isRequired,
 };
 
 export default ContactList;
