@@ -5,7 +5,7 @@ import { registerUser } from '../redux/reducers/userSlice';
 const RegistrationForm = () => {
   const dispatch = useDispatch();
   const [userData, setUserData] = useState({
-    username: '',
+    name: '',
     email: '',
     password: '',
   });
@@ -20,7 +20,7 @@ const RegistrationForm = () => {
     dispatch(registerUser(userData));
 
     setUserData({
-      username: '',
+      name: '',
       email: '',
       password: '',
     });
@@ -29,11 +29,11 @@ const RegistrationForm = () => {
   return (
     <form onSubmit={handleSubmit}>
       <label>
-        Username:
+        Name:
         <input
           type="text"
-          name="username"
-          value={userData.username}
+          name="name"
+          value={userData.name}
           onChange={handleChange}
         />
       </label>
